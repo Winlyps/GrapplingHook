@@ -1,0 +1,14 @@
+name: GrapplingHook
+version: '1.0-SNAPSHOT'
+main: winlyps.grapplingHook.GrapplingHook
+api-version: '1.20'
+authors: [ Winlyps ]
+commands:
+  grhook:
+    description: Gives the player a grappling hook with specified uses.
+    permission: grapplinghook.use
+    permission-message: You do not have permission to use this command.
+permissions:
+  grapplinghook.use:
+    description: Allows the player to use the grappling hook command.
+    default: op
