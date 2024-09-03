@@ -1,6 +1,7 @@
 //3.File: GrapplingHookListener.kt
 package winlyps.grapplingHook
 
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -21,10 +22,19 @@ class GrapplingHookListener(private val plugin: JavaPlugin) : Listener {
         if (event.state != PlayerFishEvent.State.REEL_IN) return
 
         val player = event.player
-        val itemInHand = player.inventory.itemInMainHand
+        val itemInMainHand = player.inventory.itemInMainHand
+        val itemInOffHand = player.inventory.itemInOffHand
 
-        val itemMeta = itemInHand.itemMeta
-        if (itemInHand.type != Material.FISHING_ROD || itemMeta?.displayName != "Grappling Hook") return
+        val itemMetaMainHand = itemInMainHand.itemMeta
+        val itemMetaOffHand = itemInOffHand.itemMeta
+
+        val itemMeta = if (itemInMainHand.type == Material.FISHING_ROD && itemMetaMainHand?.displayName == "${ChatColor.AQUA}Grappling Hook") {
+            itemMetaMainHand
+        } else if (itemInOffHand.type == Material.FISHING_ROD && itemMetaOffHand?.displayName == "${ChatColor.AQUA}Grappling Hook") {
+            itemMetaOffHand
+        } else {
+            return
+        }
 
         val lore = itemMeta?.lore
         if (lore.isNullOrEmpty()) return
@@ -53,12 +63,20 @@ class GrapplingHookListener(private val plugin: JavaPlugin) : Listener {
         player.velocity = player.velocity.add(adjustedDirection.multiply(2.0)) // Adjust the multiplier for desired speed
 
         if (usesLeft <= 1) {
-            player.inventory.setItemInMainHand(ItemStack(Material.AIR))
-            player.sendMessage("Your grappling hook has broken.")
+            if (itemInMainHand.type == Material.FISHING_ROD && itemMetaMainHand?.displayName == "${ChatColor.AQUA}Grappling Hook") {
+                player.inventory.setItemInMainHand(ItemStack(Material.AIR))
+            } else if (itemInOffHand.type == Material.FISHING_ROD && itemMetaOffHand?.displayName == "${ChatColor.AQUA}Grappling Hook") {
+                player.inventory.setItemInOffHand(ItemStack(Material.AIR))
+            }
+            // Removed the notification message
         } else {
             val newMeta = itemMeta.clone()
             newMeta.setLore(listOf("Uses left: ${usesLeft - 1}"))
-            itemInHand.itemMeta = newMeta
+            if (itemInMainHand.type == Material.FISHING_ROD && itemMetaMainHand?.displayName == "${ChatColor.AQUA}Grappling Hook") {
+                itemInMainHand.itemMeta = newMeta
+            } else if (itemInOffHand.type == Material.FISHING_ROD && itemMetaOffHand?.displayName == "${ChatColor.AQUA}Grappling Hook") {
+                itemInOffHand.itemMeta = newMeta
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 //2.File: GrapplingHookCommandExecutor.kt
 package winlyps.grapplingHook
 
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -31,7 +32,7 @@ class GrapplingHookCommandExecutor(private val plugin: GrapplingHook) : CommandE
 
         val hook = ItemStack(Material.FISHING_ROD)
         val meta = hook.itemMeta
-        meta?.setDisplayName("Grappling Hook")
+        meta?.setDisplayName("${ChatColor.AQUA}Grappling Hook")
         meta?.setLore(listOf("Uses left: $numberOfUses"))
         hook.itemMeta = meta
 
